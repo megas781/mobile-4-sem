@@ -1,0 +1,14 @@
+<resources>
+	<string name="app_name">mywidget</string>
+	<string name="appwidget_text">Глебовиджет</string>
+	<string name="configure">Настроить</string>
+	<string name="add_widget">Добавить виджет</string>
+	
+	<string name="red">Красный</string>
+	<string name="orange">Оранжевый</string>
+	<string name="yellow">Желтый</string>
+	<string name="green">Зеленый</string>
+	<string name="lightblue">Голубой</string>
+	<string name="blue">Синий</string>
+	<string name="purple">Фиолетовый</string>
+</resources>
