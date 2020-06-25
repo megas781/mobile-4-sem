@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#5BF7FFEE"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    android:gravity="center">
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        android:textSize="34sp"
+        android:layout_marginBottom="40dp"/>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/computer_label"
+        android:textSize="28sp"/>
+    <TextView
+        android:id="@+id/computer_score_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:textSize="20sp"
+        tools:text="0 очков"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/you_label"
+        android:textSize="28sp"/>
+    <TextView
+        android:id="@+id/your_score_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:textSize="20sp"
+        tools:text="0 очков"
+        />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cube_values_label"
+        android:textSize="28sp"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp">
+        <TextView
+            android:id="@+id/left_cude_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            tools:text="0 очков"
+            android:textSize="20sp" />
+        <TextView
+            android:id="@+id/right_cube_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="0 очков"
+            android:textSize="20sp"/>
+    </LinearLayout>
+    
+    <Button
+        android:id="@+id/throw_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/throw_cubes_button_label"
+        android:onClick="onClick"/>
+
+</LinearLayout>

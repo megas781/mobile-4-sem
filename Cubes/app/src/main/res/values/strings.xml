@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Игра "Кубики"</string>
+    <string name="computer_label">Компьютер</string>
+    <string name="you_label">Вы</string>
+    <plurals name="scores">
+        <item quantity="zero">Пока нет очков</item>
+        <item quantity="one">%1$d очко</item>
+        <item quantity="two">%1$d очка</item>
+        <item quantity="few">%1$d очка</item>
+        <item quantity="many">%1$d очков</item>
+        <item quantity="other">%1$d очков</item>
+    </plurals>
+    <string name="cube_values_label">Значения кубиков</string>
+    <string name="throw_cubes_button_label">Бросить кубики</string>
+    <string name="computer_turn_label">Ход компьютера</string>
+    
+    <string name="loose_label">Компьютер вас победил :(</string>
+    <string name="win_label">Вы победили компьютер :)</string>
+    <string name="new_game_button">Играть снова</string>
+</resources>
