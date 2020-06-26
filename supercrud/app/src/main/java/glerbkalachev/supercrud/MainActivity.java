@@ -1,10 +1,12 @@
 package glerbkalachev.supercrud;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 //        newContact.mEmail = "megas781@gmail.com";
 //        ContactLab.get(this).addContact(newContact);
 
-        Log.e("mytag","fetched fio: " + ContactLab.get(this).getContactList().get(0).mFio);
+//        Log.e("mytag","fetched fio: " + ContactLab.get(this).getContactList().get(0).mFio);
 
         theRecyclerView = findViewById(R.id.contacts_recycler_view);
         theRecyclerView.setAdapter(new ContactHolderAdapter(ContactLab.get(this).getContactList()));
@@ -47,6 +49,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void onAddButtonTapped(View view) {
+        Intent i = new Intent(this, EditActivity.class);
+        startActivityForResult(i, CONTACT_NEW_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e("mytag", "onActivityResult: ");
+        ((ContactHolderAdapter) this.theRecyclerView.getAdapter()).setContactsList(ContactLab.get(this).getContactList());
+    }
 
     class ContactHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -92,6 +105,11 @@ public class MainActivity extends AppCompatActivity {
     class ContactHolderAdapter extends RecyclerView.Adapter<ContactHolder> {
 
         public ArrayList<Contact> mContactList;
+
+        public void setContactsList(ArrayList<Contact> list) {
+            this.mContactList = list;
+            this.notifyDataSetChanged();
+        }
 
         //Адаптер принимает на вход список контактов
         public ContactHolderAdapter(ArrayList<Contact> contactList) {
