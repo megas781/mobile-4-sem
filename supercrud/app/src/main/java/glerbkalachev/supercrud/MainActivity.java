@@ -98,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             //здесь будет intent
+            Intent i = new Intent(MainActivity.this, EditActivity.class);
+            i.putExtra("contact_id", mContact.getId().toString());
+            startActivityForResult(i, CONTACT_DETAIL_REQUEST_CODE);
         }
 
     }

@@ -34,15 +34,14 @@ public class EditActivity extends AppCompatActivity {
         this.mFioEditText = findViewById(R.id.fio_text_edit);
         this.mFioEditText.addTextChangedListener(mTextWatcher);
         this.mPhoneEditText = findViewById(R.id.phone_text_edit);
-        this.mPhoneEditText.addTextChangedListener(mTextWatcher);
         this.mEmailEditText = findViewById(R.id.email_text_edit);
-        this.mEmailEditText.addTextChangedListener(mTextWatcher);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             makingNewContact = false;
             //Если передали id, то редактируем существующий
             UUID contactId = UUID.fromString(extras.getString("contact_id"));
+            mContact = ContactLab.get(this).getContact(contactId);
         } else {
             //иначе создаем новый контакт
             makingNewContact = true;
@@ -55,9 +54,8 @@ public class EditActivity extends AppCompatActivity {
     TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            findViewById(R.id.save_button_id).setEnabled(EditActivity.this.mFioEditText.getText().toString().length() *
-                    EditActivity.this.mPhoneEditText.getText().toString().length() *
-                    EditActivity.this.mEmailEditText.getText().toString().length() != 0);
+            findViewById(R.id.save_button_id).setEnabled(
+                    EditActivity.this.mFioEditText.getText().toString().length()  != 0);
         }
         @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
         @Override public void afterTextChanged(Editable s) {}
@@ -70,7 +68,11 @@ public class EditActivity extends AppCompatActivity {
         mContact.mPhone = mPhoneEditText.getText().toString();
         mContact.mEmail = mEmailEditText.getText().toString();
 
-        ContactLab.get(this).addContact(mContact);
+        if (makingNewContact) {
+            ContactLab.get(this).addContact(mContact);
+        } else {
+            ContactLab.get(this).updateContact(mContact);
+        }
         finish();
     }
 }
