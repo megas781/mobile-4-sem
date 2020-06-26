@@ -3,6 +3,7 @@ package glerbkalachev.supercrud;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     //Экземпляр recyclerView
     RecyclerView theRecyclerView;
 
+    ContactHolderAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +47,13 @@ public class MainActivity extends AppCompatActivity {
 //        Log.e("mytag","fetched fio: " + ContactLab.get(this).getContactList().get(0).mFio);
 
         theRecyclerView = findViewById(R.id.contacts_recycler_view);
-        theRecyclerView.setAdapter(new ContactHolderAdapter(ContactLab.get(this).getContactList()));
+        mAdapter = new ContactHolderAdapter(ContactLab.get(this).getContactList());
+        theRecyclerView.setAdapter(mAdapter);
         theRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        ItemTouchHelperCallback callback = new ItemTouchHelperCallback(mAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(theRecyclerView);
 
     }
 
@@ -58,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("mytag", "onActivityResult: ");
-        ((ContactHolderAdapter) this.theRecyclerView.getAdapter()).setContactsList(ContactLab.get(this).getContactList());
+        mAdapter.setContactsList(ContactLab.get(this).getContactList());
     }
 
     class ContactHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -105,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    class ContactHolderAdapter extends RecyclerView.Adapter<ContactHolder> {
+    class ContactHolderAdapter extends RecyclerView.Adapter<ContactHolder> implements ItemTouchHelperAdapter {
 
         public ArrayList<Contact> mContactList;
 
@@ -138,7 +146,38 @@ public class MainActivity extends AppCompatActivity {
         public int getItemCount() {
             return mContactList.size();
         }
+
+        @Override
+        public void onContactDismiss(int position) {
+            ContactLab.get(MainActivity.this).deleteContact(this.mContactList.get(position).getId());
+            this.mContactList.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
+    static public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
+
+        private final ItemTouchHelperAdapter adapter;
+
+        //инициализатор принимает contact adapter
+        public ItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            return makeMovementFlags(0, ItemTouchHelper.START);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return true;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            this.adapter.onContactDismiss(viewHolder.getAdapterPosition());
+        }
+    }
 
 }
