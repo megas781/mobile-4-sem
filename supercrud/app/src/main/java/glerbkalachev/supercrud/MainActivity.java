@@ -2,60 +2,120 @@ package glerbkalachev.supercrud;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import glerbkalachev.supercrud.model.Contact;
 import glerbkalachev.supercrud.model.ContactLab;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Код для детального контакта
+    private static final int CONTACT_DETAIL_REQUEST_CODE = 1;
+    //Код для нового контакта
+    private static final int CONTACT_NEW_REQUEST_CODE = 2;
+
+    //Экземпляр recyclerView
     RecyclerView theRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        theRecyclerView = findViewById(R.id.contacts_recycler_view);
 
+//        theRecyclerView = findViewById(R.id.contacts_recycler_view);
 //        Contact newContact = new Contact();
 //        newContact.mFio = "Глебка Романыч";
 //        newContact.mPhone = "02";
 //        newContact.mEmail = "megas781@gmail.com";
-
 //        ContactLab.get(this).addContact(newContact);
 
         Log.e("mytag","fetched fio: " + ContactLab.get(this).getContactList().get(0).mFio);
 
+        theRecyclerView = findViewById(R.id.contacts_recycler_view);
+        theRecyclerView.setAdapter(new ContactHolderAdapter(ContactLab.get(this).getContactList()));
+        theRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
     }
 
 
-    class ContactHolder extends RecyclerView.ViewHolder {
+    class ContactHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        protected Contact mContact;
+        protected TextView mFioTextView;
+        protected TextView mPhoneTextView;
+        protected TextView mEmailTextView;
+
+
         public ContactHolder(@NonNull View itemView) {
             super(itemView);
+
+            mFioTextView = itemView.findViewById(R.id.fio_text_view);
+            mPhoneTextView = itemView.findViewById(R.id.phone_text_view);
+            mEmailTextView = itemView.findViewById(R.id.email_text_view);
+
+            itemView.setOnClickListener(this);
+
+
         }
+
+        public void bind(Contact contact) {
+
+            mContact = contact;
+            mFioTextView.setText(mContact.mFio);
+            mPhoneTextView.setText(mContact.mPhone);
+            mEmailTextView.setText(mContact.mEmail);
+
+        }
+
+        /**
+         * Реагирует на нажатие на самого себя
+         *
+         * @param v
+         */
+        @Override
+        public void onClick(View v) {
+            //здесь будет intent
+        }
+
     }
 
     class ContactHolderAdapter extends RecyclerView.Adapter<ContactHolder> {
 
+        public ArrayList<Contact> mContactList;
+
+        //Адаптер принимает на вход список контактов
+        public ContactHolderAdapter(ArrayList<Contact> contactList) {
+            mContactList = contactList;
+        }
+
         @NonNull
         @Override
         public ContactHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return null;
+            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+            //inflate'им layout ячейки
+            View v = layoutInflater.inflate(R.layout.cell_contact, parent, false);
+            //Возвращаем инициализируемый contactHolder с этой view'шкой
+            return new ContactHolder(v);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ContactHolder holder, int position) {
-
+            holder.bind(mContactList.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return mContactList.size();
         }
     }
 

@@ -6,10 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import glerbkalachev.supercrud.model.database.ContactCursor;
 import glerbkalachev.supercrud.model.database.ContactDatabaseBuilder;
-import glerbkalachev.supercrud.model.database.ContactDbSchema;
 import glerbkalachev.supercrud.model.database.ContactDbSchema.ContactsTable;
 
 public class ContactLab {
@@ -38,7 +38,7 @@ public class ContactLab {
         ArrayList<Contact> contactList = new ArrayList<>();
 
         //два null обозначают "брать все!"
-        ContactCursor contactCursor = queryCrimes(null, null);
+        ContactCursor contactCursor = queryContacts(null, null);
         try {
             contactCursor.moveToFirst();
             /* Свойство cursor.IsAfterLast() сообщает, что указатель вышел за пределы последней
@@ -59,10 +59,54 @@ public class ContactLab {
     }
 
 
-    //Метод для добавления контакта в базу
+
+    public Contact getContact(UUID uuid) {
+
+        ContactCursor contactCursor = queryContacts(
+                ContactsTable.Cols.UUID + " = ?",
+                new String[]{uuid.toString()});
+
+        try {
+            //Если из базы данных ничего не найдено
+            if (contactCursor.getCount() == 0) {
+                return null;
+            } else {
+                //По идеи по uuid мы должны получить только одну строку, поэтому идем
+                //К первому попавшемуся и возвращаем его
+                contactCursor.moveToFirst();
+                return contactCursor.getContact();
+            }
+        } finally {
+            //Не забываем закрывать курсоры
+            contactCursor.close();
+        }
+    }
     public void addContact(Contact c) {
         ContentValues values = getContentValues(c);
         mDatabase.insertOrThrow(ContactsTable.NAME,null,values);
+    }
+    public void deleteContact(UUID contactId) {
+        mDatabase.delete(
+                ContactsTable.NAME,
+                ContactsTable.Cols.UUID + " = ?",
+                new String[] {contactId.toString()});
+    }
+    public void updateContact(Contact contact) {
+        /*
+        Конструкция update принимает:
+        1) Имя таблицы, чтобы определить, куда вставлять
+        2) Объект класса ContentValues, чтобы определить, что вставлять
+        3) логическое выражение, которое будет вставлено в запрос после ключегого "where"
+        4) Массив параметров, которые будут вставляться вапрос вместо знаков вопроса (?)
+        Аргументы не вставляются в логическое выражение напрямую, а передаются через массив строк
+        во избежание SQL-инъекций
+         */
+        mDatabase.update(
+                ContactsTable.NAME,
+                getContentValues(contact),
+                ContactsTable.Cols.UUID + " = ?",
+                new String[] {contact.getId().toString()});
+
     }
 
     //Метод для преобразования объекта Java в строку таблицы
@@ -78,7 +122,7 @@ public class ContactLab {
     }
 
     //Создание запроса данных
-    private ContactCursor queryCrimes(String whereClause, String[] whereArgs) {
+    private ContactCursor queryContacts(String whereClause, String[] whereArgs) {
         Cursor cursor = mDatabase.query(
                 ContactsTable.NAME,
                 null,whereClause,
